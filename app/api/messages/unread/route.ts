@@ -2,10 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { prisma } from "@/lib/prisma";
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET || "your-secret-key-change-in-production"
-);
+import { getAuthSecret } from "@/lib/auth-secret";
 
 export async function GET(request: NextRequest) {
   try {
@@ -17,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     try {
-      const { payload } = await jwtVerify(token.value, JWT_SECRET);
+      const { payload } = await jwtVerify(token.value, getAuthSecret());
       const userId = payload.userId as string;
       
       console.log('API - Checking messages for userId:', userId);

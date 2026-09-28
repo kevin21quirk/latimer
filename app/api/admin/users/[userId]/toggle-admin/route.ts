@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { prisma } from "@/lib/prisma";
+import { getAuthSecret } from "@/lib/auth-secret";
 
 async function verifyAdmin(request: NextRequest) {
   const cookieStore = await cookies();
@@ -12,7 +13,7 @@ async function verifyAdmin(request: NextRequest) {
   }
 
   try {
-    const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET || "fallback-secret");
+    const secret = getAuthSecret();
     const { payload } = await jwtVerify(token.value, secret);
 
     const user = await prisma.user.findUnique({

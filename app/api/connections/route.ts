@@ -3,10 +3,7 @@ import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET || "your-secret-key-change-in-production"
-);
+import { getAuthSecret } from "@/lib/auth-secret";
 
 const connectionSchema = z.object({
   addresseeId: z.string(),
@@ -21,7 +18,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token.value, JWT_SECRET);
+    const { payload } = await jwtVerify(token.value, getAuthSecret());
     const userId = payload.userId as string;
 
     const body = await request.json();

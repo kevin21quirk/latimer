@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import DashboardClient from "@/components/dashboard/DashboardClient";
+import { feedPostInclude, toMemberSafePost } from "@/lib/post-privacy";
 
 export default async function DashboardPage() {
   const session = await getSession();
@@ -45,37 +46,7 @@ export default async function DashboardPage() {
     },
     take: 20,
     orderBy: { createdAt: "desc" },
-    include: {
-      user: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          accountType: true,
-          profileImage: true,
-          companyName: true,
-        },
-      },
-      likes: {
-        select: {
-          userId: true,
-        },
-      },
-      comments: {
-        select: {
-          id: true,
-          content: true,
-          createdAt: true,
-          user: {
-            select: {
-              id: true,
-              firstName: true,
-              lastName: true,
-            },
-          },
-        },
-      },
-    },
+    include: feedPostInclude,
   });
 
   // Get groups created by user with pending join requests
@@ -123,7 +94,7 @@ export default async function DashboardPage() {
 
   return <DashboardClient 
     user={user} 
-    initialPosts={posts} 
+    initialPosts={posts.map(toMemberSafePost)} 
     userGroups={userGroups}
     pendingConnectionRequests={pendingConnectionRequests}
   />;

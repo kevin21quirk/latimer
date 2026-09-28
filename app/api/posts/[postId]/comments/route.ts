@@ -2,10 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { prisma } from "@/lib/prisma";
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "your-secret-key"
-);
+import { getAuthSecret } from "@/lib/auth-secret";
+import { toMemberSafePost } from "@/lib/post-privacy";
 
 export async function POST(
   request: NextRequest,
@@ -19,7 +17,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { payload } = await jwtVerify(token.value, JWT_SECRET);
+    const { payload } = await jwtVerify(token.value, getAuthSecret());
     const userId = payload.userId as string;
 
     const { postId } = await params;
@@ -77,7 +75,7 @@ export async function POST(
       },
     });
 
-    return NextResponse.json(updatedPost);
+    return NextResponse.json(updatedPost && toMemberSafePost(updatedPost));
   } catch (error) {
     console.error("Error adding comment:", error);
     return NextResponse.json(

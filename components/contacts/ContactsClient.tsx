@@ -42,7 +42,7 @@ import Link from "next/link";
 
 type User = {
   id: string;
-  email: string;
+  email?: string;
   firstName: string;
   lastName: string;
   accountType: string;
@@ -95,7 +95,7 @@ export default function ContactsClient({
   userRecommendations,
   groupRecommendations,
 }: {
-  user: User;
+  user: User & { email: string };
   connections: Connection[];
   allUsers: User[];
   userRecommendations: RecommendedUser[];

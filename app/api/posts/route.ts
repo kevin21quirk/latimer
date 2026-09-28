@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { requireAuth } from "@/lib/auth";
+import { getSession, requireAuth } from "@/lib/auth";
+import { feedPostInclude, toMemberSafePost } from "@/lib/post-privacy";
 import { z } from "zod";
 
 const createPostSchema = z.object({
@@ -55,7 +56,7 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return NextResponse.json(post, { status: 201 });
+    return NextResponse.json(toMemberSafePost(post), { status: 201 });
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
@@ -74,42 +75,35 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get("limit") || "20");
-    const offset = parseInt(searchParams.get("offset") || "0");
+    const limit = Math.min(Math.max(parseInt(searchParams.get("limit") || "20") || 20, 1), 50);
+    const offset = Math.max(parseInt(searchParams.get("offset") || "0") || 0, 0);
+
+    const memberships = await prisma.groupMember.findMany({
+      where: { userId: session.userId },
+      select: { groupId: true },
+    });
 
     const posts = await prisma.post.findMany({
       where: {
         isHidden: false,
+        OR: [
+          { groupId: null },
+          { groupId: { in: memberships.map((m) => m.groupId) } },
+        ],
       },
       take: limit,
       skip: offset,
       orderBy: { createdAt: "desc" },
-      include: {
-        user: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            accountType: true,
-            profileImage: true,
-            companyName: true,
-          },
-        },
-        likes: {
-          select: {
-            userId: true,
-          },
-        },
-        comments: {
-          select: {
-            id: true,
-          },
-        },
-      },
+      include: feedPostInclude,
     });
 
-    return NextResponse.json(posts);
+    return NextResponse.json(posts.map(toMemberSafePost));
   } catch (error) {
     console.error("Get posts error:", error);
     return NextResponse.json(

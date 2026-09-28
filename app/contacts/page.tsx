@@ -43,7 +43,6 @@ export default async function ContactsPage() {
           lastName: true,
           accountType: true,
           profileImage: true,
-          email: true,
           interests: true,
         },
       },
@@ -54,7 +53,6 @@ export default async function ContactsPage() {
           lastName: true,
           accountType: true,
           profileImage: true,
-          email: true,
           interests: true,
         },
       },
@@ -72,7 +70,6 @@ export default async function ContactsPage() {
       lastName: true,
       accountType: true,
       profileImage: true,
-      email: true,
       interests: true,
     },
     orderBy: {

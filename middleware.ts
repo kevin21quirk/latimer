@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
-
-const secret = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET || "your-secret-key-change-in-production"
-);
+import { getAuthSecret } from "@/lib/auth-secret";
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get("auth-token");
@@ -16,7 +13,7 @@ export async function middleware(request: NextRequest) {
     }
 
     try {
-      await jwtVerify(token.value, secret);
+      await jwtVerify(token.value, getAuthSecret());
       return NextResponse.next();
     } catch (error) {
       return NextResponse.redirect(new URL("/login", request.url));
@@ -25,7 +22,7 @@ export async function middleware(request: NextRequest) {
 
   if ((pathname === "/login" || pathname === "/register") && token) {
     try {
-      await jwtVerify(token.value, secret);
+      await jwtVerify(token.value, getAuthSecret());
       return NextResponse.redirect(new URL("/dashboard", request.url));
     } catch (error) {
       return NextResponse.next();

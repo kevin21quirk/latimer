@@ -41,12 +41,6 @@ export async function GET(request: NextRequest) {
                 },
               },
               {
-                email: {
-                  startsWith: searchLower,
-                  mode: "insensitive",
-                },
-              },
-              {
                 companyName: {
                   startsWith: searchLower,
                   mode: "insensitive",
@@ -66,7 +60,6 @@ export async function GET(request: NextRequest) {
         id: true,
         firstName: true,
         lastName: true,
-        email: true,
         accountType: true,
         profileImage: true,
         companyName: true,

@@ -287,7 +287,7 @@ export default function MessagesClient({
                                       {u.firstName} {u.lastName}
                                     </p>
                                     <p className="text-xs text-muted-foreground">
-                                      {u.accountType} • {u.email}
+                                      {u.accountType}{u.email ? ` • ${u.email}` : ""}
                                     </p>
                                   </div>
                                 </div>

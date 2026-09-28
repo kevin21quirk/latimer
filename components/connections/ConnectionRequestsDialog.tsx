@@ -21,7 +21,7 @@ type ConnectionRequest = {
     id: string;
     firstName: string;
     lastName: string;
-    email: string;
+    email?: string;
     accountType: string;
     profileImage: string | null;
     companyName: string | null;

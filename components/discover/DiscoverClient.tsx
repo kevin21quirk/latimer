@@ -21,7 +21,7 @@ import Link from "next/link";
 
 type User = {
   id: string;
-  email: string;
+  email?: string;
   firstName: string;
   lastName: string;
   accountType: string;
@@ -49,7 +49,7 @@ export default function DiscoverClient({
   allUsers,
   allGroups,
 }: {
-  user: User;
+  user: User & { email: string };
   allUsers: User[];
   allGroups: Group[];
 }) {

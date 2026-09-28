@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { prisma } from "@/lib/prisma";
 import NewsletterClient from "@/components/admin/NewsletterClient";
+import { getAuthSecret } from "@/lib/auth-secret";
 
 async function getAdminUser() {
   const cookieStore = await cookies();
@@ -13,7 +14,7 @@ async function getAdminUser() {
   }
 
   try {
-    const secret = new TextEncoder().encode(process.env.NEXTAUTH_SECRET || "fallback-secret");
+    const secret = getAuthSecret();
     const { payload } = await jwtVerify(token.value, secret);
 
     const user = await prisma.user.findUnique({

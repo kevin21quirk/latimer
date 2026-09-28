@@ -4,15 +4,12 @@ import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
+import { getAuthSecret } from "@/lib/auth-secret";
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string(),
 });
-
-const secret = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET || "your-secret-key-change-in-production"
-);
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,7 +49,7 @@ export async function POST(request: NextRequest) {
       .setProtectedHeader({ alg: "HS256" })
       .setIssuedAt()
       .setExpirationTime("7d")
-      .sign(secret);
+      .sign(getAuthSecret());
 
     const cookieStore = await cookies();
     cookieStore.set("auth-token", token, {

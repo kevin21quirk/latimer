@@ -1,9 +1,6 @@
 import { jwtVerify } from "jose";
 import { cookies } from "next/headers";
-
-const secret = new TextEncoder().encode(
-  process.env.NEXTAUTH_SECRET || "your-secret-key-change-in-production"
-);
+import { getAuthSecret } from "@/lib/auth-secret";
 
 export async function getSession() {
   const cookieStore = await cookies();
@@ -14,7 +11,7 @@ export async function getSession() {
   }
 
   try {
-    const { payload } = await jwtVerify(token.value, secret);
+    const { payload } = await jwtVerify(token.value, getAuthSecret());
     return payload as {
       userId: string;
       email: string;
