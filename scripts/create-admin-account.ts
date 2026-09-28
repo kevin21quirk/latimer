@@ -1,13 +1,23 @@
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function createAdminAccount() {
-  const email = 'kevin.s.quirk@gmail.com';
-  const password = 'a15Dz6fl!';
-  const firstName = 'Kevin';
-  const lastName = 'Quirk';
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  const firstName = process.env.ADMIN_FIRST_NAME || 'Admin';
+  const lastName = process.env.ADMIN_LAST_NAME || 'User';
+
+  if (!email || !password) {
+    console.error('❌ Set ADMIN_EMAIL and ADMIN_PASSWORD environment variables before running this script.');
+    process.exit(1);
+  }
+
+  if (password.length < 12) {
+    console.error('❌ ADMIN_PASSWORD must be at least 12 characters.');
+    process.exit(1);
+  }
 
   try {
     // Check if user already exists
@@ -36,7 +46,7 @@ async function createAdminAccount() {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create the admin user
-    const user = await prisma.user.create({
+    await prisma.user.create({
       data: {
         email,
         password: hashedPassword,

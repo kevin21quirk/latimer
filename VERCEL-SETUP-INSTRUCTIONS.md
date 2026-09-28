@@ -2,7 +2,7 @@
 
 ## 🎯 Your Neon Database Connection String
 ```
-postgresql://neondb_owner:npg_DHRXJ1xvcVC6@ep-old-mountain-abek7dau-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+postgresql://USER:PASSWORD@YOUR-NEON-HOST/neondb?sslmode=require&channel_binding=require
 ```
 
 ---
@@ -14,7 +14,7 @@ postgresql://neondb_owner:npg_DHRXJ1xvcVC6@ep-old-mountain-abek7dau-pooler.eu-we
 In your project root, create a `.env` file with:
 
 ```env
-DATABASE_URL="postgresql://neondb_owner:npg_DHRXJ1xvcVC6@ep-old-mountain-abek7dau-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+DATABASE_URL="postgresql://USER:PASSWORD@YOUR-NEON-HOST/neondb?sslmode=require&channel_binding=require"
 ```
 
 ### Step 2: Run Database Migrations
@@ -90,7 +90,7 @@ Click **"Environment Variables"** section and add these **3 variables**:
 - **Name:** `DATABASE_URL`
 - **Value:** 
   ```
-  postgresql://neondb_owner:npg_DHRXJ1xvcVC6@ep-old-mountain-abek7dau-pooler.eu-west-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require
+  postgresql://USER:PASSWORD@YOUR-NEON-HOST/neondb?sslmode=require&channel_binding=require
   ```
 - **Environments:** ✅ Production, ✅ Preview, ✅ Development
 
