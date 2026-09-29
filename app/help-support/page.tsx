@@ -19,6 +19,7 @@ export default async function HelpSupportPage() {
       lastName: true,
       accountType: true,
       profileImage: true,
+      isAdmin: true,
     },
   });
 

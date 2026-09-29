@@ -54,6 +54,7 @@ type User = {
   lastName: string;
   accountType: string;
   profileImage: string | null;
+  isAdmin?: boolean;
 };
 
 type MessageUser = {
@@ -203,7 +204,7 @@ export default function PlatformHeader({ user, currentPage = "dashboard" }: { us
             <div className="h-10 w-10" />
             <div className="h-10 w-10" />
             <div className="h-10 w-10" />
-            {user.accountType === "INDIVIDUAL" && user.email === "kevin.s.quirk@gmail.com" && (
+            {user.isAdmin && (
               <div className="h-10 w-10" />
             )}
             <div className="h-10 w-10" />
@@ -473,7 +474,7 @@ export default function PlatformHeader({ user, currentPage = "dashboard" }: { us
                 </div>
               </PopoverContent>
             </Popover>
-            {user.accountType === "INDIVIDUAL" && user.email === "kevin.s.quirk@gmail.com" && (
+            {user.isAdmin && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Link href="/admin">

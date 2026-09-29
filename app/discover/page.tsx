@@ -19,6 +19,7 @@ export default async function DiscoverPage() {
       lastName: true,
       accountType: true,
       profileImage: true,
+      isAdmin: true,
       interests: true,
       companyName: true,
       charityName: true,

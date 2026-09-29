@@ -19,6 +19,7 @@ export default async function GroupsPage() {
       lastName: true,
       accountType: true,
       profileImage: true,
+      isAdmin: true,
     },
   });
 

@@ -27,6 +27,7 @@ export default async function ProfilePage() {
       charityNumber: true,
       bio: true,
       profileImage: true,
+      isAdmin: true,
       coverImage: true,
       interests: true,
       marketingConsent: true,

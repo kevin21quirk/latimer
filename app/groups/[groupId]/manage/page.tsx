@@ -72,6 +72,7 @@ export default async function GroupManagePage({ params }: { params: Promise<{ gr
       lastName: true,
       accountType: true,
       profileImage: true,
+      isAdmin: true,
     },
   });
 

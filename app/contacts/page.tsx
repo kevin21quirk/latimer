@@ -19,6 +19,7 @@ export default async function ContactsPage() {
       lastName: true,
       accountType: true,
       profileImage: true,
+      isAdmin: true,
       interests: true,
     },
   });

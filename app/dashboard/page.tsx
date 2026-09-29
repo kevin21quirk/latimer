@@ -20,6 +20,7 @@ export default async function DashboardPage() {
       lastName: true,
       accountType: true,
       profileImage: true,
+      isAdmin: true,
       bio: true,
     },
   });

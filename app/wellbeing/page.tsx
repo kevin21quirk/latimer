@@ -19,6 +19,7 @@ export default async function WellbeingPage() {
       lastName: true,
       accountType: true,
       profileImage: true,
+      isAdmin: true,
     },
   });
 
