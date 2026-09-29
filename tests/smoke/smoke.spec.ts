@@ -33,7 +33,8 @@ test.afterAll(async () => {
 
 test("public pages render", async ({ page }) => {
   await page.goto("/");
-  await expect(page).toHaveTitle(/.+/);
+  await expect(page).toHaveURL(/\/burton-latimer/);
+  await expect(page.getByRole("heading", { name: "Burton Latimer" })).toBeVisible();
   await page.goto("/login");
   await expect(page.getByRole("button", { name: /log ?in|sign in/i }).first()).toBeVisible();
   await page.goto("/register");
