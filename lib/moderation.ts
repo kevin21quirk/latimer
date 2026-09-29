@@ -130,8 +130,6 @@ export function shouldShowSafetyWarning(content: string): {
   show: boolean;
   message?: string;
 } {
-  const lowerContent = content.toLowerCase();
-
   // Financial information warning
   if (/money|payment|bank|card|account/i.test(content)) {
     return {
