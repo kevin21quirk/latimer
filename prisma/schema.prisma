@@ -69,6 +69,8 @@ model User {
   connectionRequests Connection[] @relation("ConnectionRequests")
   connectionReceived Connection[] @relation("ConnectionReceived")
 
+  communityRoles CommunityRole[]
+
   reportsSubmitted Report[] @relation("ReportsSubmitted")
   reportsReceived  Report[] @relation("ReportsReceived")
   reportsReviewed  Report[] @relation("ReportsReviewed")
@@ -536,4 +538,55 @@ model AuditLog {
   @@index([actorId, createdAt])
   @@index([targetType, targetId])
   @@index([createdAt])
+}
+
+enum LocationType {
+  COUNTRY
+  COUNTY
+  DISTRICT
+  TOWN
+  NEIGHBOURHOOD
+}
+
+model Location {
+  id       String       @id @default(cuid())
+  slug     String       @unique
+  name     String
+  type     LocationType
+  parentId String?
+  parent   Location?    @relation("LocationChildren", fields: [parentId], references: [id])
+  children Location[]   @relation("LocationChildren")
+  postcode String?
+  lat      Float?
+  lng      Float?
+  isActive Boolean      @default(true)
+
+  communityRoles CommunityRole[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([parentId])
+  @@index([type, isActive])
+}
+
+enum CommunityRoleName {
+  MODERATOR
+  EDITOR
+  AMBASSADOR
+}
+
+// Town-scoped roles: a moderator in Burton Latimer is not a moderator in
+// Kettering. locationId null means platform-wide.
+model CommunityRole {
+  id         String            @id @default(cuid())
+  userId     String
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  locationId String?
+  location   Location?         @relation(fields: [locationId], references: [id])
+  role       CommunityRoleName
+  createdAt  DateTime          @default(now())
+
+  @@unique([userId, locationId, role])
+  @@index([locationId])
 }
