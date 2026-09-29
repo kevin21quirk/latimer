@@ -38,12 +38,21 @@ type Handler<P> = (request: NextRequest, context: { params: Promise<P> }) => Pro
 
 export async function call<P = Record<string, never>>(
   handler: Handler<P>,
-  { method = "GET", body, params, query = "" }: { method?: string; body?: unknown; params?: P; query?: string } = {}
+  {
+    method = "GET",
+    body,
+    params,
+    query = "",
+    headers = {},
+  }: { method?: string; body?: unknown; params?: P; query?: string; headers?: Record<string, string> } = {}
 ) {
   const request = new NextRequest(`http://localhost/test${query}`, {
     method,
     body: body === undefined ? undefined : JSON.stringify(body),
-    headers: body === undefined ? undefined : { "Content-Type": "application/json" },
+    headers: {
+      ...(body === undefined ? {} : { "Content-Type": "application/json" }),
+      ...headers,
+    },
   });
   const response = await handler(request, { params: Promise.resolve((params ?? {}) as P) });
   const text = await response.text();

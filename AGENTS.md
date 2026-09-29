@@ -18,9 +18,16 @@ Next.js 16 App Router, React 19, Prisma 6 + Neon (Lakebase Postgres 18, London),
 
 ## Verification commands
 - Install: `npm ci` (runs `prisma generate`)
-- Typecheck: `npx tsc --noEmit`
-- Lint: `npx eslint .` (baseline has 42 pre-existing errors until Stage 0.4)
-- Build: `npx next build` (needs `DATABASE_URL` and `NEXTAUTH_SECRET` set; placeholder values are fine for build)
+- Typecheck: `npm run typecheck`
+- Lint: `npm run lint` (0 errors; ~111 pre-existing warnings)
+- Tests: `npm test` (unit + integration), `npm run test:unit`, `npm run test:integration` (needs `TEST_DATABASE_URL` in `.env.test.local`, pointing at the Neon `test` branch)
+- Build: `npm run build` (needs `DATABASE_URL` and `NEXTAUTH_SECRET` set; placeholder values are fine for build)
+
+## Platform libs (Stage 0.5)
+- `lib/auth.ts`: `getSession(request?)` (cookie or `Authorization: Bearer`), `requireAuth`, `requireAdmin`, `signSessionToken` (JWT carries `tv` = User.tokenVersion), `revokeAllSessions`.
+- `lib/with-route.ts`: `withRoute(handler, { auth: "none"|"optional"|"user"|"admin", rateLimit: { limit, windowMs, key? } })` — uniform auth, Postgres rate limiting (`lib/rate-limit.ts`) and error mapping (`HttpError` → status, `ZodError` → 400, else 500). New API routes should use this.
+- `lib/permissions.ts`: `roleOf`, `hasPermission`, `canInitiateDirectMessage` (businesses can't DM residents).
+- `lib/audit.ts`: `logAudit` (never throws). `lib/projections.ts`: member/public user selects + `toPublicUser` ("Sarah P."). `lib/errors.ts`: `HttpError` + helpers. `lib/env.ts`: lazy env validation.
 
 ## Rules
 - The new platform has its own Neon project, separate from the live app's database. Live data is migrated at cut-over.

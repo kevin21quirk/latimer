@@ -2,9 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { SignJWT } from "jose";
 import { cookies } from "next/headers";
-import { getAuthSecret } from "@/lib/auth-secret";
+import { signSessionToken } from "@/lib/auth";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -41,15 +40,7 @@ export async function POST(request: NextRequest) {
       data: { lastLogin: new Date() },
     });
 
-    const token = await new SignJWT({
-      userId: user.id,
-      email: user.email,
-      accountType: user.accountType,
-    })
-      .setProtectedHeader({ alg: "HS256" })
-      .setIssuedAt()
-      .setExpirationTime("7d")
-      .sign(getAuthSecret());
+    const token = await signSessionToken(user);
 
     const cookieStore = await cookies();
     cookieStore.set("auth-token", token, {
