@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth";
+import { canInitiateDirectMessage } from "@/lib/permissions";
 import { z } from "zod";
 
 const createMessageSchema = z.object({
@@ -13,6 +14,36 @@ export async function POST(request: NextRequest) {
     const session = await requireAuth();
     const body = await request.json();
     const data = createMessageSchema.parse(body);
+
+    const [sender, receiver] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: session.userId },
+        select: { accountType: true, isAdmin: true },
+      }),
+      prisma.user.findUnique({
+        where: { id: data.receiverId },
+        select: { id: true, accountType: true, isAdmin: true },
+      }),
+    ]);
+
+    if (!receiver) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
+    // Businesses can reply to resident enquiries but never open a
+    // conversation with a resident (approved decision #3).
+    if (sender && !canInitiateDirectMessage(sender, receiver)) {
+      const residentStarted = await prisma.message.findFirst({
+        where: { senderId: receiver.id, receiverId: session.userId },
+        select: { id: true },
+      });
+      if (!residentStarted) {
+        return NextResponse.json(
+          { message: "Businesses can only reply to messages started by residents" },
+          { status: 403 }
+        );
+      }
+    }
 
     const message = await prisma.message.create({
       data: {

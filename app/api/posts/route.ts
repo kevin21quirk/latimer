@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getSession, requireAuth } from "@/lib/auth";
 import { feedPostInclude, toMemberSafePost } from "@/lib/post-privacy";
+import { calculateUserRiskScore, moderateText } from "@/lib/moderation";
+import { forbidden, HttpError } from "@/lib/errors";
 import { z } from "zod";
 
 const createPostSchema = z.object({
@@ -10,8 +12,6 @@ const createPostSchema = z.object({
   images: z.array(z.string()).optional(),
   video: z.string().nullable().optional(),
   groupId: z.string().nullable().optional(),
-  riskScore: z.number().optional(),
-  isFlagged: z.boolean().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -19,6 +19,36 @@ export async function POST(request: NextRequest) {
     const session = await requireAuth();
     const body = await request.json();
     const data = createPostSchema.parse(body);
+
+    const author = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { createdAt: true, isAdmin: true, accountType: true },
+    });
+    if (!author) {
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
+    }
+
+    if (data.groupId) {
+      const membership = await prisma.groupMember.findUnique({
+        where: { userId_groupId: { userId: session.userId, groupId: data.groupId } },
+        select: { id: true },
+      });
+      if (!membership) {
+        throw forbidden("You are not a member of this group");
+      }
+    }
+
+    // Moderation is always computed server-side; clients cannot supply or
+    // bypass risk scores.
+    const textModeration = moderateText(data.content);
+    if (textModeration.isBlocked) {
+      return NextResponse.json(
+        { error: "Content contains prohibited material", message: "Content contains prohibited material", flags: textModeration.flags },
+        { status: 403 }
+      );
+    }
+    const riskScore = textModeration.riskScore + calculateUserRiskScore(author);
+    const isFlagged = riskScore >= 40;
 
     const post = await prisma.post.create({
       data: {
@@ -28,9 +58,9 @@ export async function POST(request: NextRequest) {
         video: data.video || null,
         userId: session.userId,
         groupId: data.groupId || null,
-        riskScore: data.riskScore || 0,
-        isFlagged: data.isFlagged || false,
-        flaggedAt: data.isFlagged ? new Date() : null,
+        riskScore,
+        isFlagged,
+        flaggedAt: isFlagged ? new Date() : null,
       },
       include: {
         user: {
@@ -58,6 +88,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json(toMemberSafePost(post), { status: 201 });
   } catch (error) {
+    if (error instanceof HttpError) {
+      return NextResponse.json({ message: error.message }, { status: error.status });
+    }
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { message: "Invalid data", errors: error.issues },

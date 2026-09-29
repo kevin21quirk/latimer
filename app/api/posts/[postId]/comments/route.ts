@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { jwtVerify } from "jose";
 import { prisma } from "@/lib/prisma";
-import { getAuthSecret } from "@/lib/auth-secret";
+import { requireAuth } from "@/lib/auth";
+import { HttpError } from "@/lib/errors";
+import { assertPostAccess } from "@/lib/post-access";
 import { toMemberSafePost } from "@/lib/post-privacy";
 
 export async function POST(
@@ -10,15 +10,8 @@ export async function POST(
   { params }: { params: Promise<{ postId: string }> }
 ) {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("auth-token");
-
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { payload } = await jwtVerify(token.value, getAuthSecret());
-    const userId = payload.userId as string;
+    const session = await requireAuth();
+    const userId = session.userId;
 
     const { postId } = await params;
     const { content } = await request.json();
@@ -29,6 +22,13 @@ export async function POST(
         { status: 400 }
       );
     }
+
+    // Private-group posts are only commentable by group members.
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { id: true, groupId: true, isHidden: true },
+    });
+    await assertPostAccess(post, userId);
 
     // Create the comment
     await prisma.comment.create({
@@ -77,6 +77,9 @@ export async function POST(
 
     return NextResponse.json(updatedPost && toMemberSafePost(updatedPost));
   } catch (error) {
+    if (error instanceof HttpError) {
+      return NextResponse.json({ error: error.message }, { status: error.status });
+    }
     console.error("Error adding comment:", error);
     return NextResponse.json(
       { error: "Failed to add comment" },

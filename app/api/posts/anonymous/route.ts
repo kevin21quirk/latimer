@@ -1,6 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { calculateUserRiskScore, moderateText } from "@/lib/moderation";
+import { z } from "zod";
+
+const createAnonymousPostSchema = z.object({
+  content: z.string().min(1),
+  anonymousContactEmail: z.string().email().nullable().optional(),
+});
 
 // Create anonymous post
 export async function POST(request: NextRequest) {
@@ -10,24 +17,44 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { content, anonymousContactEmail } = await request.json();
+    const data = createAnonymousPostSchema.parse(await request.json());
 
-    if (!content || !content.trim()) {
-      return NextResponse.json({ error: "Content is required" }, { status: 400 });
+    const author = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { createdAt: true, isAdmin: true, accountType: true },
+    });
+    if (!author) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
+
+    const textModeration = moderateText(data.content);
+    if (textModeration.isBlocked) {
+      return NextResponse.json(
+        { error: "Content contains prohibited material" },
+        { status: 403 }
+      );
+    }
+    const riskScore = textModeration.riskScore + calculateUserRiskScore(author);
+    const isFlagged = riskScore >= 40;
 
     const post = await prisma.post.create({
       data: {
-        content: content.trim(),
+        content: data.content.trim(),
         userId: session.userId,
         isAnonymous: true,
-        anonymousContactEmail: anonymousContactEmail || null,
+        anonymousContactEmail: data.anonymousContactEmail || null,
         postType: "GENERAL",
+        riskScore,
+        isFlagged,
+        flaggedAt: isFlagged ? new Date() : null,
       },
     });
 
     return NextResponse.json(post);
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return NextResponse.json({ error: "Invalid data", errors: error.issues }, { status: 400 });
+    }
     console.error("Error creating anonymous post:", error);
     return NextResponse.json(
       { error: "Failed to create post" },

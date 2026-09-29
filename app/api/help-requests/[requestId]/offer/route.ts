@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth";
+import { hasPermission } from "@/lib/permissions";
 
 export async function POST(
   request: NextRequest,
@@ -9,6 +10,15 @@ export async function POST(
   try {
     const session = await requireAuth();
     const { requestId } = await params;
+
+    // Businesses cannot respond to help requests (safeguarding decision #2).
+    const viewer = await prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { accountType: true, isAdmin: true },
+    });
+    if (!viewer || !hasPermission(viewer, "help-requests:respond")) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
 
     // Check if request exists and is open
     const helpRequest = await prisma.helpRequest.findUnique({

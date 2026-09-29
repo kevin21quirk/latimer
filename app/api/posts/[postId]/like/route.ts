@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth";
+import { HttpError } from "@/lib/errors";
+import { assertPostAccess } from "@/lib/post-access";
 import { feedPostInclude, toMemberSafePost } from "@/lib/post-privacy";
 
 export async function POST(
@@ -10,6 +12,13 @@ export async function POST(
   try {
     const session = await requireAuth();
     const { postId } = await params;
+
+    // Private-group posts are only likeable by group members.
+    const target = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { id: true, groupId: true, isHidden: true },
+    });
+    await assertPostAccess(target, session.userId);
 
     const existingLike = await prisma.like.findUnique({
       where: {
@@ -44,6 +53,9 @@ export async function POST(
 
     return NextResponse.json(toMemberSafePost(post));
   } catch (error) {
+    if (error instanceof HttpError) {
+      return NextResponse.json({ message: error.message }, { status: error.status });
+    }
     console.error("Like post error:", error);
     return NextResponse.json(
       { message: "Internal server error" },

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth";
+import { hasPermission } from "@/lib/permissions";
 import { z } from "zod";
 
 const createHelpRequestSchema = z.object({
@@ -11,9 +12,21 @@ const createHelpRequestSchema = z.object({
   location: z.string().optional(),
 });
 
+async function getViewer(userId: string) {
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, accountType: true, isAdmin: true },
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const session = await requireAuth();
+    const viewer = await getViewer(session.userId);
+    if (!viewer || !hasPermission(viewer, "help-requests:create")) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
+
     const body = await request.json();
     const data = createHelpRequestSchema.parse(body);
 
@@ -48,6 +61,10 @@ export async function POST(request: NextRequest) {
 export async function GET() {
   try {
     const session = await requireAuth();
+    const viewer = await getViewer(session.userId);
+    if (!viewer || !hasPermission(viewer, "help-requests:view")) {
+      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+    }
 
     const helpRequests = await prisma.helpRequest.findMany({
       where: {
@@ -58,7 +75,6 @@ export async function GET() {
           select: {
             id: true,
             firstName: true,
-            lastName: true,
             profileImage: true,
             city: true,
           },
@@ -70,7 +86,17 @@ export async function GET() {
       ],
     });
 
-    return NextResponse.json(helpRequests);
+    // Safeguarding: exact location stays with the requester until a helper is
+    // accepted. The requester (and admins) still see their own location.
+    const canSeeLocation = (requesterId: string) =>
+      requesterId === viewer.id || viewer.isAdmin;
+
+    return NextResponse.json(
+      helpRequests.map(({ location, ...rest }) => ({
+        ...rest,
+        location: canSeeLocation(rest.requesterId) ? location : null,
+      }))
+    );
   } catch (error) {
     console.error("Get help requests error:", error);
     return NextResponse.json(
