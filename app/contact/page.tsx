@@ -41,7 +41,7 @@ export default function ContactPage() {
         <div className="mb-8 text-center">
           <h1 className="mb-4 text-4xl font-bold">Contact Us</h1>
           <p className="text-lg text-muted-foreground">
-            Have a question or need help? We're here to assist you.
+            Have a question or need help? We&apos;re here to assist you.
           </p>
         </div>
 
@@ -50,7 +50,7 @@ export default function ContactPage() {
             <CardHeader>
               <CardTitle>Send us a message</CardTitle>
               <CardDescription>
-                Fill out the form below and we'll get back to you as soon as possible.
+                Fill out the form below and we&apos;ll get back to you as soon as possible.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -60,7 +60,7 @@ export default function ContactPage() {
                     Thank you for your message!
                   </p>
                   <p className="mt-2 text-sm text-accent-foreground">
-                    We'll get back to you soon.
+                    We&apos;ll get back to you soon.
                   </p>
                   <Button
                     onClick={() => setSuccess(false)}
@@ -192,7 +192,7 @@ export default function ContactPage() {
                 <div>
                   <p className="font-semibold">How do I reset my password?</p>
                   <p className="text-muted-foreground">
-                    Click "Forgot Password" on the login page and follow the instructions.
+                    Click &quot;Forgot Password&quot; on the login page and follow the instructions.
                   </p>
                 </div>
                 <div>

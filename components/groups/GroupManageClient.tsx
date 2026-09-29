@@ -268,7 +268,7 @@ export default function GroupManageClient({ user, group }: { user: User; group: 
                         )}
                       </div>
                       <p className="mt-1 text-xs text-muted-foreground">
-                        Recommended: Square image, at least 400x400px. Click "Save Changes" to upload.
+                        Recommended: Square image, at least 400x400px. Click &quot;Save Changes&quot; to upload.
                       </p>
                     </div>
                   </div>

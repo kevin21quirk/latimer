@@ -77,7 +77,7 @@ function generateNewsletterHTML(data: NewsletterEmailData): string {
   const { name, content, images = [] } = data;
 
   // Convert markdown-style formatting to HTML
-  let htmlContent = content
+  const htmlContent = content
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>') // **bold**
     .replace(/\*(.+?)\*/g, '<em>$1</em>') // *italic*
     .replace(/\[(.+?)\]\((.+?)\)/g, '<a href="$2" style="color: #D4AF37;">$1</a>') // [text](url)

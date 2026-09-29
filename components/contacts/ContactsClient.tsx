@@ -786,7 +786,7 @@ export default function ContactsClient({
           <DialogHeader>
             <DialogTitle>Report User</DialogTitle>
             <DialogDescription>
-              Please provide details about why you're reporting this user
+              Please provide details about why you&apos;re reporting this user
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleReportUser} className="space-y-4">

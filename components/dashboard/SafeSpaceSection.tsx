@@ -131,7 +131,7 @@ export default function SafeSpaceSection({ userId }: { userId: string }) {
               <div className="text-sm">
                 <p className="font-semibold text-amber-900 mb-1">Emergency Support</p>
                 <p className="text-amber-800">
-                  If you're in immediate danger, please call <strong>999</strong>. 
+                  If you&apos;re in immediate danger, please call <strong>999</strong>. 
                   For urgent mental health support, call <strong>Samaritans: 116 123</strong> (24/7).
                 </p>
               </div>
@@ -176,7 +176,7 @@ export default function SafeSpaceSection({ userId }: { userId: string }) {
           <CardContent>
             {anonymousPosts.length === 0 ? (
               <p className="text-center text-muted-foreground py-8">
-                You haven't created any anonymous posts yet.
+                You haven&apos;t created any anonymous posts yet.
               </p>
             ) : (
               <div className="space-y-4">
@@ -281,14 +281,14 @@ export default function SafeSpaceSection({ userId }: { userId: string }) {
                 className="mt-2"
               />
               <p className="mt-1 text-xs text-muted-foreground">
-                If you'd like services to contact you directly, provide an email. This remains private 
+                If you&apos;d like services to contact you directly, provide an email. This remains private 
                 and is only shared with verified support organisations who respond to your post.
               </p>
             </div>
 
             <div className="rounded-lg bg-amber-50 border border-amber-200 p-3">
               <p className="text-xs text-amber-900">
-                <strong>Remember:</strong> If you're in immediate danger, call 999. For urgent mental 
+                <strong>Remember:</strong> If you&apos;re in immediate danger, call 999. For urgent mental 
                 health support, call Samaritans on 116 123 (24/7).
               </p>
             </div>

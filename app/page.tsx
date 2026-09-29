@@ -77,7 +77,7 @@ export default function Home() {
                 Bringing Burton Latimer Together
               </h2>
               <p className="mb-8 sm:mb-12 animate-slide-up text-base sm:text-lg text-muted-foreground px-4" style={{ animationDelay: '0.1s' }}>
-                Burton Latimer Connect is more than just a social platform—it's a digital hub designed 
+                Burton Latimer Connect is more than just a social platform—it&apos;s a digital hub designed 
                 to strengthen our local community bonds and support those who need it most.
               </p>
             </div>
@@ -317,7 +317,7 @@ export default function Home() {
                   <CardContent className="space-y-4">
                     <p className="text-muted-foreground">
                       Current Facebook community groups. If you would like to be added to this page as a community 
-                      Facebook group, please contact us and we'll add you to our website.
+                      Facebook group, please contact us and we&apos;ll add you to our website.
                     </p>
                     <div className="space-y-2">
                       <p className="font-semibold text-foreground">Burton Latimer Community Group</p>
@@ -364,7 +364,7 @@ export default function Home() {
           <div className="container mx-auto px-4 text-center">
             <h2 className="mb-6 text-4xl font-bold">Join Our Community Today</h2>
             <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground">
-              Whether you're an individual looking to connect, a charity seeking support, 
+              Whether you&apos;re an individual looking to connect, a charity seeking support, 
               or a business wanting to reach local customers, Burton Latimer Community is here for you.
             </p>
             <Link href="/register">

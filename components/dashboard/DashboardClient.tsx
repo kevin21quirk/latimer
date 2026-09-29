@@ -90,6 +90,17 @@ type UserGroup = {
   };
 };
 
+type UnreadMessage = {
+  id: string;
+  content: string;
+  createdAt: string;
+  sender: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+};
+
 type PendingConnectionRequest = {
   id: string;
   requester: {
@@ -121,7 +132,7 @@ export default function DashboardClient({
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [showMessageAlert, setShowMessageAlert] = useState(false);
   const [unreadMessageCount, setUnreadMessageCount] = useState(0);
-  const [unreadMessages, setUnreadMessages] = useState<any[]>([]);
+  const [unreadMessages, setUnreadMessages] = useState<UnreadMessage[]>([]);
   const [selectedGroup, setSelectedGroup] = useState<string>("public");
   const [showNotificationDialog, setShowNotificationDialog] = useState(false);
   const [hasShownNotification, setHasShownNotification] = useState(false);

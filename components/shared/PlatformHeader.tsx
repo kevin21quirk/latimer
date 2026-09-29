@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -56,21 +56,36 @@ type User = {
   profileImage: string | null;
 };
 
+type MessageUser = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  profileImage?: string | null;
+};
+
+type Message = {
+  id: string;
+  content: string;
+  senderId: string;
+  read: boolean;
+  createdAt: string;
+  sender: MessageUser;
+};
+
 export default function PlatformHeader({ user, currentPage = "dashboard" }: { user: User; currentPage?: string }) {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
   const [unreadCount, setUnreadCount] = useState(0);
-  const [recentMessages, setRecentMessages] = useState<any[]>([]);
+  const [recentMessages, setRecentMessages] = useState<Message[]>([]);
   const [showMessageDialog, setShowMessageDialog] = useState(false);
-  const [selectedConversation, setSelectedConversation] = useState<any>(null);
-  const [conversationMessages, setConversationMessages] = useState<any[]>([]);
+  const [selectedConversation, setSelectedConversation] = useState<MessageUser | null>(null);
+  const [conversationMessages, setConversationMessages] = useState<Message[]>([]);
   const [replyMessage, setReplyMessage] = useState("");
-
-  useEffect(() => {
-    setMounted(true);
-    fetchUnreadMessages();
-  }, []);
 
   const fetchUnreadMessages = async () => {
     try {
@@ -85,7 +100,23 @@ export default function PlatformHeader({ user, currentPage = "dashboard" }: { us
     }
   };
 
-  const openMessagePopup = async (message: any) => {
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/messages/unread')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!cancelled && data) {
+          setUnreadCount(data.count);
+          setRecentMessages(data.messages);
+        }
+      })
+      .catch((error) => console.error('Error fetching unread messages:', error));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const openMessagePopup = async (message: Message) => {
     setSelectedConversation(message.sender);
     setShowMessageDialog(true);
     
@@ -435,7 +466,7 @@ export default function PlatformHeader({ user, currentPage = "dashboard" }: { us
                       <div className="text-center py-8 text-muted-foreground">
                         <Bell className="mx-auto h-12 w-12 mb-2 opacity-50" />
                         <p className="text-sm">No notifications yet</p>
-                        <p className="text-xs mt-1">We'll notify you when something happens</p>
+                        <p className="text-xs mt-1">We&apos;ll notify you when something happens</p>
                       </div>
                     </div>
                   </ScrollArea>

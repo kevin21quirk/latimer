@@ -110,7 +110,7 @@ export default function TermsPage() {
             </CardHeader>
             <CardContent className="prose max-w-none">
               <p>
-                Burton Latimer Connect is provided "as is" without warranties of any kind, either 
+                Burton Latimer Connect is provided &quot;as is&quot; without warranties of any kind, either 
                 express or implied. We do not guarantee that the platform will be uninterrupted, 
                 secure, or error-free.
               </p>

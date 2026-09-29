@@ -125,7 +125,7 @@ export default function ReportPostDialog({
           <div className="rounded-lg bg-amber-50 border border-amber-200 p-3">
             <p className="text-xs text-amber-900">
               <strong>Important:</strong> False reports may result in action against your account. 
-              If you're in immediate danger, call 999. For urgent support, contact Samaritans on 116 123.
+              If you&apos;re in immediate danger, call 999. For urgent support, contact Samaritans on 116 123.
             </p>
           </div>
 

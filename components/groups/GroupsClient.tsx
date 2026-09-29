@@ -255,7 +255,7 @@ export default function GroupsClient({
                 <Users className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                 <p className="mb-2 text-lg font-semibold">No groups available yet</p>
                 <p className="text-muted-foreground">
-                  Be the first to create a community group! Click "Create Group" above to get started.
+                  Be the first to create a community group! Click &quot;Create Group&quot; above to get started.
                 </p>
               </div>
             ) : (
@@ -413,7 +413,7 @@ export default function GroupsClient({
                 <div className="col-span-full py-12 text-center">
                   <Users className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
                   <p className="text-muted-foreground">
-                    You haven't created or joined any groups yet. Browse all groups to find communities
+                    You haven&apos;t created or joined any groups yet. Browse all groups to find communities
                     that interest you, or create your own!
                   </p>
                 </div>

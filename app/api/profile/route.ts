@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/prisma";
 import { requireAuth } from "@/lib/auth";
 import { z } from "zod";
@@ -24,7 +25,7 @@ export async function PUT(request: NextRequest) {
     const data = updateProfileSchema.parse(body);
 
     // Build update data object with only provided fields
-    const updateData: any = {};
+    const updateData: Prisma.UserUpdateInput = {};
     if (data.firstName !== undefined) updateData.firstName = data.firstName;
     if (data.lastName !== undefined) updateData.lastName = data.lastName;
     if (data.phoneNumber !== undefined) updateData.phoneNumber = data.phoneNumber || null;

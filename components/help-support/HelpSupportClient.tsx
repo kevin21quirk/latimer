@@ -271,7 +271,7 @@ export default function HelpSupportClient({
             </TabsTrigger>
             <TabsTrigger value="helping">
               <HeartHandshake className="mr-2 h-4 w-4" />
-              I'm Helping ({helpingWith.length})
+              I&apos;m Helping ({helpingWith.length})
             </TabsTrigger>
           </TabsList>
 
@@ -337,7 +337,7 @@ export default function HelpSupportClient({
               {myRequests.length === 0 ? (
                 <div className="col-span-2 py-12 text-center">
                   <AlertCircle className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-                  <p className="text-muted-foreground">You haven't created any help requests yet</p>
+                  <p className="text-muted-foreground">You haven&apos;t created any help requests yet</p>
                   <Button onClick={() => setShowRequestDialog(true)} className="mt-4">
                     Create Your First Request
                   </Button>
@@ -389,9 +389,9 @@ export default function HelpSupportClient({
               {helpingWith.length === 0 ? (
                 <div className="col-span-2 py-12 text-center">
                   <HeartHandshake className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-                  <p className="text-muted-foreground">You're not currently helping with any requests</p>
+                  <p className="text-muted-foreground">You&apos;re not currently helping with any requests</p>
                   <p className="mt-2 text-sm text-muted-foreground">
-                    Check the "Nearby Requests" tab to offer help
+                    Check the &quot;Nearby Requests&quot; tab to offer help
                   </p>
                 </div>
               ) : (
