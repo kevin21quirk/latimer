@@ -21,6 +21,7 @@ Next.js 16 App Router, React 19, Prisma 6 + Neon (Lakebase Postgres 18, London),
 - Typecheck: `npm run typecheck`
 - Lint: `npm run lint` (0 errors; ~111 pre-existing warnings)
 - Tests: `npm test` (unit + integration), `npm run test:unit`, `npm run test:integration` (needs `TEST_DATABASE_URL` in `.env.test.local`, pointing at the Neon `test` branch)
+- E2E smoke: `npm run test:e2e` (Playwright desktop + mobile; spins up `next dev` on :3100 against `TEST_DATABASE_URL`; needs `npx playwright install chromium` once)
 - Build: `npm run build` (needs `DATABASE_URL` and `NEXTAUTH_SECRET` set; placeholder values are fine for build)
 
 ## Platform libs (Stage 0.5)

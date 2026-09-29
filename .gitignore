@@ -42,3 +42,7 @@ next-env.d.ts
 
 /lib/generated/prisma
 .neon
+
+# playwright
+/test-results/
+/playwright-report/
