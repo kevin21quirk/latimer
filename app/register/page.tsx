@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 function RegisterForm() {
   const router = useRouter();
   const [accountType, setAccountType] = useState<string>("INDIVIDUAL");
+  const [businessType, setBusinessType] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -35,7 +36,7 @@ function RegisterForm() {
       city: (formData.get("city") as string) || "Burton Latimer",
       postcode: formData.get("postcode") ? (formData.get("postcode") as string) : undefined,
       companyName: formData.get("companyName") ? (formData.get("companyName") as string) : undefined,
-      businessType: formData.get("businessType") ? (formData.get("businessType") as string) : undefined,
+      businessType: businessType || undefined,
       website: formData.get("website") ? (formData.get("website") as string) : undefined,
       charityName: formData.get("charityName") ? (formData.get("charityName") as string) : undefined,
       charityNumber: formData.get("charityNumber") ? (formData.get("charityNumber") as string) : undefined,
@@ -140,7 +141,29 @@ function RegisterForm() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="businessType">Business Type *</Label>
-                    <Input id="businessType" name="businessType" placeholder="e.g., Retail, Restaurant, Services" required />
+                    <Select name="businessType" value={businessType} onValueChange={setBusinessType} required>
+                      <SelectTrigger id="businessType">
+                        <SelectValue placeholder="Select your business type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Retail & Shopping">Retail & Shopping</SelectItem>
+                        <SelectItem value="Food & Drink">Food & Drink</SelectItem>
+                        <SelectItem value="Trades & Home Services">Trades & Home Services</SelectItem>
+                        <SelectItem value="Health & Beauty">Health & Beauty</SelectItem>
+                        <SelectItem value="Professional Services">Professional Services</SelectItem>
+                        <SelectItem value="Automotive">Automotive</SelectItem>
+                        <SelectItem value="Childcare & Education">Childcare & Education</SelectItem>
+                        <SelectItem value="Pets & Animals">Pets & Animals</SelectItem>
+                        <SelectItem value="Fitness & Sport">Fitness & Sport</SelectItem>
+                        <SelectItem value="Arts & Entertainment">Arts & Entertainment</SelectItem>
+                        <SelectItem value="IT & Digital Services">IT & Digital Services</SelectItem>
+                        <SelectItem value="Cleaning Services">Cleaning Services</SelectItem>
+                        <SelectItem value="Garden & Landscaping">Garden & Landscaping</SelectItem>
+                        <SelectItem value="Property & Accommodation">Property & Accommodation</SelectItem>
+                        <SelectItem value="Transport & Delivery">Transport & Delivery</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">
@@ -272,11 +295,11 @@ function RegisterForm() {
                   />
                   <Label htmlFor="gdprConsent" className="text-sm font-normal">
                     I accept the{" "}
-                    <Link href="/privacy" className="text-primary underline">
+                    <Link href="/privacy" target="_blank" rel="noopener noreferrer" className="text-primary underline">
                       Privacy Policy
                     </Link>{" "}
                     and{" "}
-                    <Link href="/terms" className="text-primary underline">
+                    <Link href="/terms" target="_blank" rel="noopener noreferrer" className="text-primary underline">
                       Terms of Service
                     </Link>
                     . I understand my data will be processed in accordance with GDPR. *
