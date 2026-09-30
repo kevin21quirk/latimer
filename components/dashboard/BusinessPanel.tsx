@@ -130,17 +130,24 @@ export default function BusinessPanel({ user, community }: { user: BusinessUser;
         {coverImage && (
           <Image src={coverImage} alt="Cover" fill className="object-cover" unoptimized />
         )}
-        <Button
-          type="button"
-          variant="secondary"
-          size="sm"
-          className="absolute right-2 top-2 gap-1 text-xs"
-          disabled={uploading !== null}
-          onClick={() => document.getElementById("cover-upload")?.click()}
-        >
-          <ImageIcon className="h-3.5 w-3.5" />
-          {uploading === "coverImage" ? "Uploading..." : coverImage ? "Change cover" : "Add cover"}
-        </Button>
+        <div className="absolute right-2 top-2 flex flex-col items-end gap-1">
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            className="gap-1 text-xs"
+            disabled={uploading !== null}
+            onClick={() => document.getElementById("cover-upload")?.click()}
+          >
+            <ImageIcon className="h-3.5 w-3.5" />
+            {uploading === "coverImage" ? "Uploading..." : coverImage ? "Change cover" : "Add cover"}
+          </Button>
+          {!coverImage && (
+            <span className="rounded bg-white/80 px-1.5 py-0.5 text-[10px] text-muted-foreground">
+              Recommended: 1200 × 400 px
+            </span>
+          )}
+        </div>
         <input
           id="cover-upload"
           type="file"
@@ -157,7 +164,7 @@ export default function BusinessPanel({ user, community }: { user: BusinessUser;
             type="button"
             onClick={() => document.getElementById("logo-upload")?.click()}
             className="relative -mt-8 h-16 w-16 shrink-0 overflow-hidden rounded-full border-4 border-white bg-accent text-white shadow"
-            title="Upload logo"
+            title="Upload logo — a square image (e.g. 400 × 400 px) looks best"
           >
             {profileImage ? (
               <Image src={profileImage} alt="Logo" fill className="object-cover" unoptimized />
