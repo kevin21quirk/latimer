@@ -22,6 +22,17 @@ export default async function DashboardPage() {
       profileImage: true,
       isAdmin: true,
       bio: true,
+      companyName: true,
+      charityName: true,
+      charityNumber: true,
+      businessType: true,
+      description: true,
+      website: true,
+      phoneNumber: true,
+      address: true,
+      city: true,
+      postcode: true,
+      coverImage: true,
     },
   });
 

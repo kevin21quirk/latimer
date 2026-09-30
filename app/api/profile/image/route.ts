@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { image } = await request.json();
+    const { image, field } = await request.json();
 
     if (!image) {
       return NextResponse.json({ error: "No image provided" }, { status: 400 });
@@ -20,14 +20,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid image format" }, { status: 400 });
     }
 
-    // Update user profile with the base64 image
+    // Only allow whitelisted image fields
+    const imageField = field === "coverImage" ? "coverImage" : "profileImage";
+
     const updatedUser = await prisma.user.update({
       where: { id: session.userId },
       data: {
-        profileImage: image,
+        [imageField]: image,
       },
       select: {
         profileImage: true,
+        coverImage: true,
       },
     });
 

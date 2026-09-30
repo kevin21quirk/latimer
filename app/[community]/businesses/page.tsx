@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Store } from "lucide-react";
@@ -37,6 +38,7 @@ export default async function BusinessesPage({
       description: true,
       website: true,
       city: true,
+      profileImage: true,
     },
     orderBy: { companyName: "asc" },
   });
@@ -60,7 +62,23 @@ export default async function BusinessesPage({
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {businesses.map((b) => (
             <div key={b.id} className="rounded-lg border bg-white p-5 shadow-sm">
-              <p className="font-semibold">{b.companyName}</p>
+              <div className="flex items-center gap-3">
+                {b.profileImage ? (
+                  <Image
+                    src={b.profileImage}
+                    alt={b.companyName ?? "Business logo"}
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 rounded-full object-cover"
+                    unoptimized
+                  />
+                ) : (
+                  <span className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/15">
+                    <Store className="h-5 w-5 text-accent" />
+                  </span>
+                )}
+                <p className="font-semibold">{b.companyName}</p>
+              </div>
               {b.businessType && (
                 <span className="mt-1 inline-block rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
                   {b.businessType}

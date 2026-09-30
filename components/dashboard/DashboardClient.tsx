@@ -43,6 +43,7 @@ import PlatformHeader from "@/components/shared/PlatformHeader";
 import SafeSpaceSection from "@/components/dashboard/SafeSpaceSection";
 import ReportPostDialog from "@/components/moderation/ReportPostDialog";
 import ConnectionRequestsDialog from "@/components/connections/ConnectionRequestsDialog";
+import BusinessPanel from "@/components/dashboard/BusinessPanel";
 
 type User = {
   id: string;
@@ -52,6 +53,17 @@ type User = {
   accountType: string;
   profileImage: string | null;
   bio: string | null;
+  companyName: string | null;
+  charityName: string | null;
+  charityNumber: string | null;
+  businessType: string | null;
+  description: string | null;
+  website: string | null;
+  phoneNumber: string | null;
+  address: string | null;
+  city: string | null;
+  postcode: string | null;
+  coverImage: string | null;
 };
 
 type Post = {
@@ -835,6 +847,9 @@ export default function DashboardClient({
 
           {/* Main Feed */}
           <main className="lg:col-span-6 col-span-full">
+            {(user.accountType === "COMPANY" || user.accountType === "CHARITY") && (
+              <BusinessPanel user={user} community="burton-latimer" />
+            )}
             {/* Create Post Box */}
             <Card className="mb-2 sm:mb-4 shadow-sm">
               <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
@@ -868,7 +883,13 @@ export default function DashboardClient({
                       </AvatarFallback>
                     </Avatar>
                     <Textarea
-                      placeholder={`What's on your mind, ${user.firstName}?`}
+                      placeholder={
+                        user.accountType === "COMPANY"
+                          ? `Promote ${user.companyName || "your business"} to the community...`
+                          : user.accountType === "CHARITY"
+                            ? `Share an update from ${user.charityName || "your charity"}...`
+                            : `What's on your mind, ${user.firstName}?`
+                      }
                       value={newPostContent}
                       onChange={(e) => {
                         setNewPostContent(e.target.value);

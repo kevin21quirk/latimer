@@ -12,7 +12,11 @@ const updateProfileSchema = z.object({
   city: z.string().min(1).optional(),
   postcode: z.string().nullable().optional(),
   companyName: z.string().nullable().optional(),
+  businessType: z.string().nullable().optional(),
+  charityName: z.string().nullable().optional(),
   charityNumber: z.string().nullable().optional(),
+  website: z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
   bio: z.string().nullable().optional(),
   interests: z.array(z.string()).optional(),
   marketingConsent: z.boolean().optional(),
@@ -33,7 +37,11 @@ export async function PUT(request: NextRequest) {
     if (data.city !== undefined) updateData.city = data.city;
     if (data.postcode !== undefined) updateData.postcode = data.postcode || null;
     if (data.companyName !== undefined) updateData.companyName = data.companyName || null;
+    if (data.businessType !== undefined) updateData.businessType = data.businessType || null;
+    if (data.charityName !== undefined) updateData.charityName = data.charityName || null;
     if (data.charityNumber !== undefined) updateData.charityNumber = data.charityNumber || null;
+    if (data.website !== undefined) updateData.website = data.website || null;
+    if (data.description !== undefined) updateData.description = data.description || null;
     if (data.bio !== undefined) updateData.bio = data.bio || null;
     if (data.interests !== undefined) updateData.interests = data.interests;
     if (data.marketingConsent !== undefined) updateData.marketingConsent = data.marketingConsent;
@@ -85,7 +93,11 @@ export async function GET(request: NextRequest) {
         city: true,
         postcode: true,
         companyName: true,
+        businessType: true,
+        charityName: true,
         charityNumber: true,
+        website: true,
+        description: true,
         bio: true,
         profileImage: true,
         coverImage: true,
