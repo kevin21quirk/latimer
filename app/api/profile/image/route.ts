@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Delete profile image
+// Delete an image (defaults to profileImage)
 export async function DELETE(request: NextRequest) {
   try {
     const session = await getSession();
@@ -52,10 +52,13 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    const field = request.nextUrl.searchParams.get("field");
+    const imageField = field === "coverImage" ? "coverImage" : "profileImage";
+
     await prisma.user.update({
       where: { id: session.userId },
       data: {
-        profileImage: null,
+        [imageField]: null,
       },
     });
 

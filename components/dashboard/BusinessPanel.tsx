@@ -91,6 +91,21 @@ export default function BusinessPanel({ user, community }: { user: BusinessUser;
     }
   };
 
+  const removeImage = async (field: "profileImage" | "coverImage") => {
+    setUploading(field);
+    setError("");
+    try {
+      const response = await fetch(`/api/profile/image?field=${field}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("Remove failed");
+      if (field === "profileImage") setProfileImage(null);
+      else setCoverImage(null);
+    } catch {
+      setError("Could not remove the image. Please try again.");
+    } finally {
+      setUploading(null);
+    }
+  };
+
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
@@ -140,9 +155,20 @@ export default function BusinessPanel({ user, community }: { user: BusinessUser;
             onClick={() => document.getElementById("cover-upload")?.click()}
           >
             <ImageIcon className="h-3.5 w-3.5" />
-            {uploading === "coverImage" ? "Uploading..." : coverImage ? "Change cover" : "Add cover"}
+            {uploading === "coverImage" ? "Working..." : coverImage ? "Change cover" : "Add cover"}
           </Button>
-          {!coverImage && (
+          {coverImage ? (
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              className="gap-1 text-xs text-destructive"
+              disabled={uploading !== null}
+              onClick={() => removeImage("coverImage")}
+            >
+              Remove
+            </Button>
+          ) : (
             <span className="rounded bg-white/80 px-1.5 py-0.5 text-[10px] text-muted-foreground">
               Recommended: 1200 × 400 px
             </span>
