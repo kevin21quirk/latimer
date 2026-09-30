@@ -141,7 +141,7 @@ export default function BusinessPanel({ user, community }: { user: BusinessUser;
   return (
     <Card className="mb-2 overflow-hidden shadow-sm sm:mb-4">
       {/* Cover image */}
-      <div className="relative h-28 w-full bg-gradient-to-r from-accent/20 to-accent/5 sm:h-36">
+      <div className="relative aspect-[3/1] w-full bg-gradient-to-r from-accent/20 to-accent/5">
         {coverImage && (
           <Image src={coverImage} alt="Cover" fill className="object-cover" unoptimized />
         )}
